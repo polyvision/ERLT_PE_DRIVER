@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>ERLT PocketEdition WebDriver</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/assets/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link href="/assets/font-awesome.css" rel="stylesheet" >
+    <link rel="stylesheet" href="/assets/style.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/channels.js"></script>
+    
+
+  </head>
+  <body>
+    <div class="container-fluid">
+        <h1 class="title">ERLT PocketEdition web driver v0.1</h1>
+
+        <div id="app">
+            <div class="row">
+                <div class="col">
+                    <p>
+                        <label>EasyRaceLapTimerHost</label>
+                        <input v-model="erlt_host">
+                        <button v-on:click='saveERLTHost' class="btn btn-xs"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
+                    </p>
+                </div>
+                <div class="col">
+                    <p>
+                        <label>Advanced</label>
+                        <input v-model="showAdvanced" type="checkbox">
+                    </p>
+                </div>
+                <div class="col">
+                    <p>
+                        <button v-on:click='resetBoxes' class="btn btn-primary"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</button>
+                    </p>
+                </div>
+            </div>
+
+            <pe_driver_container v-bind:show-advanced="showAdvanced" v-bind:com_ports="com_ports" v-bind:pe-data="peDriver[0]" v-bind:number="1" v-bind:channels="channels"></pe_driver_container>
+            <pe_driver_container v-bind:show-advanced="showAdvanced" v-bind:com_ports="com_ports" v-bind:pe-data="peDriver[1]" v-bind:number="2" v-bind:channels="channels"></pe_driver_container>
+            <pe_driver_container v-bind:show-advanced="showAdvanced" v-bind:com_ports="com_ports" v-bind:pe-data="peDriver[2]" v-bind:number="3" v-bind:channels="channels"></pe_driver_container>
+            <pe_driver_container v-bind:show-advanced="showAdvanced" v-bind:com_ports="com_ports" v-bind:pe-data="peDriver[3]" v-bind:number="4" v-bind:channels="channels"></pe_driver_container>
+
+            <pe_tracked_timings_container v-bind:timing-data="timingData"></pe_tracked_timings_container>
+
+            <div class="row" v-if="showAdvanced">
+                <div class="col-xl-12">
+                    <h2>Serial Log</h2>
+                    <p>
+                        <textarea v-model="serialLog" width="100%" rows="15" cols="80"></textarea>
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <script type="text/x-template" id="pe_tracked_timings_template">
+            <div class="row">
+                <div class="col">
+                    <hr/>
+                    <h2>Timing log</h2>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Device</th>
+                                <th>Lap Time</th>
+                                <th>Triggered RSSI</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="tdata in timingData">
+                                <td>{{tdata.number}}</td>
+                                <td>{{tdata.lap_time}}</td>
+                                <td>{{tdata.rssi}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </script>
+
+        <script type="text/x-template" id="pe_driver_container_template">
+            <div class="row pe_container">
+                <div class="col">
+                    <h2 class="pe_container_title">PocketEdition No: {{number}}</h2>
+                    <div class="row" style="margin-bottom: 10px;">
+                        <div class="col">
+                            <select v-model="peData.selectedComPort"> 
+                                <option v-for="com_port in com_ports" :value="com_port">
+                                    {{com_port}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <button v-on:click='refreshComPorts' class="btn btn-primary"><i class="fa fa-refresh" aria-hidden="true"></i> Refresh</button>
+                        </div>
+                        <div class="col">
+                            <button v-on:click='connectToComPort' class="btn btn-primary" v-if="peData.connected == false"><i class="fa fa-caret-square-o-right" aria-hidden="true"></i> Connect</button>
+                        </div>
+                        <div class="col">
+                            <button v-on:click='disconnectFromComPort' class="btn btn-warning" v-if="peData.connected == true"><i class="fa fa-stop-circle" aria-hidden="true"></i> Disconnect</button>
+                        </div>
+                    </div>
+                    <table class="table table-bordered" v-if="peData.connected == true">
+                        <thead>
+                            <tr>
+                                <td v-if="showAdvanced">Safety RSSI</td>
+                                <td>Channel</td>
+                                <td>SmartSense CutOff</td>
+                                <td>Minimum Lap Time</td>
+                                <td v-if="showAdvanced">Current RSSI</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td v-if="showAdvanced">
+                                    <input type="text" v-model="peData.safetyRssi">
+                                    <button v-on:click='refreshSafetyRSSI' class="btn btn-xs"><i class="fa fa-refresh" aria-hidden="true"></i></button>
+                                </td>
+                                <td>
+                                    <select v-model="peData.channel"> 
+                                        <option v-for="channel in channels" v-bind:value="channel.c">
+                                            {{channel.title}}
+                                        </option>
+                                    </select>
+                                    <button v-on:click='refreshChannel' class="btn btn-xs"><i class="fa fa-refresh" aria-hidden="true"></i></button>
+                                    <button v-on:click='saveChannel' class="btn btn-xs"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
+                                </td>
+                                <td>
+                                    <input type="text" v-model="peData.smartSenseCutOff">
+                                    <button v-on:click='refreshSmartSenseCutOff' class="btn btn-xs"><i class="fa fa-refresh" aria-hidden="true"></i></button>
+                                    <button v-on:click='saveSmartSenseCutOff' class="btn btn-xs"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
+                                </td>
+                                <td>
+                                    <input type="text" v-model="peData.minLapTime">
+                                    <button v-on:click='refreshMinimumLapTime' class="btn btn-xs"><i class="fa fa-refresh" aria-hidden="true"></i></button>
+                                    <button v-on:click='savehMinimumLapTime' class="btn btn-xs"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
+                                </td>
+                                <td v-if="showAdvanced">
+                                    <input type="text" v-model="peData.currentRSSI">
+                                    <button v-on:click='refreshCurrentRSSI' class="btn btn-xs"><i class="fa fa-refresh" aria-hidden="true"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </script>
+    </div>
+
+    <div id="footer">
+        EasyRaceLapTimer PocketEdition web driver &copy; 2016-2017 by <a href="http://www.airbirds.de" target="_blank">AirBirds.de</a>
+    </div>
+    <!-- jQuery first, then Tether, then Bootstrap JS. -->
+    <script src="/assets/vue.js"></script>
+    <script src="/vue_app.js"></script>
+    <script src="/assets/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="/assets/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="/assets/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+  </body>
+</html>
