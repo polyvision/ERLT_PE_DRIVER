@@ -23,7 +23,7 @@ web driver as a standalone tool. It's runs on Windows, MacOSX and Linux.
 The GUI of the webdriver has also a serial log in which you can see what happens inside the PocketEdition.
 
 There's also a small timing log table which shows the latest timing data of a PocketEdition. This table
-is very basic because the web driver is not a full race software but a driver. But nethertheless it 
+is very basic because the web driver is not a full race software but a driver. But nethertheless it
 could be used for training sessions with 4 people if you just want to see your lap timings.
 
 The web driver could also be used to submit timing data to 3rd party software (programming required).
@@ -41,10 +41,14 @@ Here's the mapping for the transponder tokens used in the EasyRaceLapTimer softw
 
 The webdriver is fully written in NodeJS & VueJS for the frontend. Installation is done via checking out this repository.
 
+PocketEdition firmware requirement: 2.1.3 or higher
+
 Then enter the following commands in the directory
 
     npm install
     npm start
+
+Now go to http://localhost:3000 with your browser. Be sure to change localhost to the corresponding IP if you are running the software in a WIFI.
 
 Be sure that you have nodejs installed!
 
