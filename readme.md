@@ -48,9 +48,16 @@ Then enter the following commands in the directory
     npm install
     npm start
 
-Now go to http://localhost:3000 with your browser. Be sure to change localhost to the corresponding IP if you are running the software in a WIFI.
+Now go to http://localhost:3001 with your browser. Be sure to change localhost to the corresponding IP if you are running the software in a WIFI.
 
 Be sure that you have nodejs installed!
+
+To start the driver during boot proccess on rasbian, do the following
+
+    sudo npm install forever -g
+    sudo cp xtra/webdriver /etc/init.d
+    sudo chmod +x /etc/init.d/webdriver
+    sudo update-rc.d webdriver defaults
 
 If you don't want to install the web driver on your own, check out one of the latest image releases of EasyRaceLapTimer. It
 might be alredy installed on it.
