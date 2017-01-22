@@ -14,7 +14,7 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var peConnection = require('./modules/pocket_edition_connection.js');
 
-server.listen(3000);
+server.listen(3001);
 
 app.get('/', function (req, res) {
   res.sendfile(__dirname + '/index.html');
