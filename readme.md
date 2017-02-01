@@ -10,7 +10,7 @@ Let's start from the beginning. The PocketEdition can be connected to the GPIO p
 it's GND & SIG pins. The EasyRaceLapTimer software receives a ping when a lap got triggered. It works without
 any hassles but it was somehow limited.
 
-With this webdriver, you can connect 4 PocketEditions (more in the future) via the RaspberryPI USB
+With this webdriver, you can connect 4 PocketEditions (or more via an USB hub) to the RaspberryPI USB
 ports and have full control over the PocketEditions. You can select channels and change almost all available
 settings of the boxes. When a new lap gets triggered, the web driver notifies the EasyRaceLapTimer software
 of the new lap via an API call.
@@ -36,6 +36,8 @@ Here's the mapping for the transponder tokens used in the EasyRaceLapTimer softw
     PocketEdition 2 -> VTX_SENSOR_2
     PocketEdition 3 -> VTX_SENSOR_3
     PocketEdition 4 -> VTX_SENSOR_4
+    PocketEdition 5 -> VTX_SENSOR_5
+    ...
 
 ## Installing & running
 
@@ -61,3 +63,9 @@ To start the driver during boot proccess on rasbian, do the following
 
 If you don't want to install the web driver on your own, check out one of the latest image releases of EasyRaceLapTimer. It
 might be alredy installed on it.
+
+## Changelog
+
+###Version 0.2###
+
+* added support for up to 8 PocketEditions. You need to use an active USB hub for adding the additional boxes to the Raspberry PI

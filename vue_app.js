@@ -62,7 +62,7 @@ var app = new Vue({
     socket.emit('pe_driver',{cmd: "REFRESH_COM_PORTS"});
     socket.emit('pe_driver',{cmd: "GET_ERLT_HOST"});
 
-    for(var i = 1; i <= 4; i++){
+    for(var i = 1; i <= 8; i++){
       socket.emit('pe_driver',{cmd: "IS_CONNECTED",number: i,});
     }
   },
@@ -109,12 +109,48 @@ var app = new Vue({
         minLapTime: 0,
         channel: 0,
         currentRSSI: 0
+      },
+      {
+        selectedComPort: "",
+        connected: false,
+        safetyRssi: 0,
+        smartSenseCutOff: 0,
+        minLapTime: 0,
+        channel: 0,
+        currentRSSI: 0
+      },
+      {
+        selectedComPort: "",
+        connected: false,
+        safetyRssi: 0,
+        smartSenseCutOff: 0,
+        minLapTime: 0,
+        channel: 0,
+        currentRSSI: 0
+      },
+      {
+        selectedComPort: "",
+        connected: false,
+        safetyRssi: 0,
+        smartSenseCutOff: 0,
+        minLapTime: 0,
+        channel: 0,
+        currentRSSI: 0
+      },
+      {
+        selectedComPort: "",
+        connected: false,
+        safetyRssi: 0,
+        smartSenseCutOff: 0,
+        minLapTime: 0,
+        channel: 0,
+        currentRSSI: 0
       }
     ]
   },
   methods: {
     resetBoxes: function(){
-      for(var i = 0; i <= 4; i++){
+      for(var i = 0; i <= 8; i++){
         socket.emit('pe_driver',{cmd: "PE_CMD",number: i, pe_cmd: "RESET_TTIMES"});
       }
       this.timingData = [];
@@ -129,7 +165,7 @@ var app = new Vue({
 
 socket.on('pe_driver', function (data) {
   console.log(data);
-  
+
   if(data['cmd'] == "REFRESH_COM_PORTS"){
     app.$data['com_ports'] = data['data'];
   }
@@ -137,8 +173,8 @@ socket.on('pe_driver', function (data) {
   if(data['cmd'] == "CONNECT_TO_PORT"){
     app.$data['peDriver'][data['number']-1].connected = data['connected'];
     app.$data['peDriver'][data['number']-1].selectedComPort = data['port'];
-  } 
-  
+  }
+
 
   if(data['cmd'] == "DISCONNECT_FROM_PORT"){
     app.$data['peDriver'][data['number']-1].connected = data['connected'];
@@ -147,7 +183,7 @@ socket.on('pe_driver', function (data) {
   if(data['cmd'] == "GET_ERLT_HOST"){
     app.$data['erlt_host']= data['data'];
   }
-  
+
 
   if(data['cmd'] == "INC_PE_DATA"){
 
@@ -156,7 +192,7 @@ socket.on('pe_driver', function (data) {
     if(data['data_splitted'][0] == "GSRSSI"){
       app.$data['peDriver'][data['number']-1].safetyRssi = data['data_splitted'][1];
     }
-    
+
     if(data['data_splitted'][0] == "GSSCO"){
       app.$data['peDriver'][data['number']-1].smartSenseCutOff = data['data_splitted'][1];
     }
@@ -171,7 +207,7 @@ socket.on('pe_driver', function (data) {
 
     if(data['data_splitted'][0] == "C_RSSI_SIG_STR"){
       app.$data['peDriver'][data['number']-1].currentRSSI = data['data_splitted'][1];
-    } 
+    }
 
     if(data['data_splitted'][0] == "T_TRACKED"){
       var t = {};
@@ -181,6 +217,6 @@ socket.on('pe_driver', function (data) {
 
       app.$data['timingData'].push(t);
     }
-    
-  } 
+
+  }
 });

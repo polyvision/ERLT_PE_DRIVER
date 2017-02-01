@@ -13,8 +13,8 @@ var util = require('util');
 
 var pocketEditionConnection = {};
 
-pocketEditionConnection.comPortConnections = [false,false,false,false];
-pocketEditionConnection.comPorts = [false,false,false,false];
+pocketEditionConnection.comPortConnections = [false,false,false,false,false,false,false,false];
+pocketEditionConnection.comPorts = [false,false,false,false,false,false,false,false];
 pocketEditionConnection.erlt_host = "http://localhost";
 
 pocketEditionConnection.socketCallback = null;
@@ -51,11 +51,27 @@ pocketEditionConnection.connectToComPort = function(number,com_port,callback){
         this.comPortConnections[number-1].on("data",pocketEditionConnection.onDataDeviceFour);
         this.comPorts[number-1] = com_port;
     }
+    if(number == 5){
+        this.comPortConnections[number-1].on("data",pocketEditionConnection.onDataDeviceFive);
+        this.comPorts[number-1] = com_port;
+    }
+    if(number == 6){
+        this.comPortConnections[number-1].on("data",pocketEditionConnection.onDataDeviceSix);
+        this.comPorts[number-1] = com_port;
+    }
+    if(number == 7){
+        this.comPortConnections[number-1].on("data",pocketEditionConnection.onDataDeviceSeven);
+        this.comPorts[number-1] = com_port;
+    }
+    if(number == 8){
+        this.comPortConnections[number-1].on("data",pocketEditionConnection.onDataDeviceEight);
+        this.comPorts[number-1] = com_port;
+    }
 }
 
 pocketEditionConnection.onDataDeviceOne = function(data){
     pocketEditionConnection.socketCallback(1,data);
-    
+
     var t = data.split(" ");
     if(t[0] == "T_TRACKED"){
         pocketEditionConnection.processNewLap("VTX_SENSOR_1",t[2]);
@@ -64,7 +80,7 @@ pocketEditionConnection.onDataDeviceOne = function(data){
 
 pocketEditionConnection.onDataDeviceTwo = function(data){
     pocketEditionConnection.socketCallback(2,data);
-    
+
     var t = data.split(" ");
     if(t[0] == "T_TRACKED"){
         pocketEditionConnection.processNewLap("VTX_SENSOR_2",t[2]);
@@ -73,7 +89,7 @@ pocketEditionConnection.onDataDeviceTwo = function(data){
 
 pocketEditionConnection.onDataDeviceThree = function(data){
     pocketEditionConnection.socketCallback(3,data);
-    
+
     var t = data.split(" ");
     if(t[0] == "T_TRACKED"){
         pocketEditionConnection.processNewLap("VTX_SENSOR_3",t[2]);
@@ -82,15 +98,52 @@ pocketEditionConnection.onDataDeviceThree = function(data){
 
 pocketEditionConnection.onDataDeviceFour = function(data){
     pocketEditionConnection.socketCallback(4,data);
-    
+
     var t = data.split(" ");
     if(t[0] == "T_TRACKED"){
         pocketEditionConnection.processNewLap("VTX_SENSOR_4",t[2]);
     }
 }
 
+pocketEditionConnection.onDataDeviceFive = function(data){
+    pocketEditionConnection.socketCallback(5,data);
+
+    var t = data.split(" ");
+    if(t[0] == "T_TRACKED"){
+        pocketEditionConnection.processNewLap("VTX_SENSOR_5",t[2]);
+    }
+}
+
+pocketEditionConnection.onDataDeviceSix = function(data){
+    pocketEditionConnection.socketCallback(6,data);
+
+    var t = data.split(" ");
+    if(t[0] == "T_TRACKED"){
+        pocketEditionConnection.processNewLap("VTX_SENSOR_6",t[2]);
+    }
+}
+
+pocketEditionConnection.onDataDeviceSeven = function(data){
+    pocketEditionConnection.socketCallback(7,data);
+
+    var t = data.split(" ");
+    if(t[0] == "T_TRACKED"){
+        pocketEditionConnection.processNewLap("VTX_SENSOR_7",t[2]);
+    }
+}
+
+pocketEditionConnection.onDataDeviceEight = function(data){
+    pocketEditionConnection.socketCallback(8,data);
+
+    var t = data.split(" ");
+    if(t[0] == "T_TRACKED"){
+        pocketEditionConnection.processNewLap("VTX_SENSOR_8",t[2]);
+    }
+}
+
 pocketEditionConnection.sendCommand = function(number,cmd){
     if(this.comPortConnections[number-1] != false && this.comPortConnections[number-1] !== undefined){
+        console.log(number + " PE_CMD: " + cmd)
         this.comPortConnections[number-1].write(cmd+"\n");
     }
 }
@@ -139,7 +192,7 @@ pocketEditionConnection.processNewLap = function(sensor,time_in_ms){
         } else {
             console.log(response.statusCode, body);
         }
-    });			
+    });
 }
 
 module.exports = pocketEditionConnection;

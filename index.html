@@ -12,12 +12,12 @@
     <link rel="stylesheet" href="/assets/style.css">
     <script src="/socket.io/socket.io.js"></script>
     <script src="/channels.js"></script>
-    
+
 
   </head>
   <body>
     <div class="container-fluid">
-        <h1 class="title">ERLT PocketEdition web driver v0.1</h1>
+        <h1 class="title">ERLT PocketEdition web driver v0.2</h1>
 
         <div id="app">
             <div class="row">
@@ -45,6 +45,10 @@
             <pe_driver_container v-bind:show-advanced="showAdvanced" v-bind:com_ports="com_ports" v-bind:pe-data="peDriver[1]" v-bind:number="2" v-bind:channels="channels"></pe_driver_container>
             <pe_driver_container v-bind:show-advanced="showAdvanced" v-bind:com_ports="com_ports" v-bind:pe-data="peDriver[2]" v-bind:number="3" v-bind:channels="channels"></pe_driver_container>
             <pe_driver_container v-bind:show-advanced="showAdvanced" v-bind:com_ports="com_ports" v-bind:pe-data="peDriver[3]" v-bind:number="4" v-bind:channels="channels"></pe_driver_container>
+            <pe_driver_container v-bind:show-advanced="showAdvanced" v-bind:com_ports="com_ports" v-bind:pe-data="peDriver[4]" v-bind:number="5" v-bind:channels="channels"></pe_driver_container>
+            <pe_driver_container v-bind:show-advanced="showAdvanced" v-bind:com_ports="com_ports" v-bind:pe-data="peDriver[5]" v-bind:number="6" v-bind:channels="channels"></pe_driver_container>
+            <pe_driver_container v-bind:show-advanced="showAdvanced" v-bind:com_ports="com_ports" v-bind:pe-data="peDriver[6]" v-bind:number="7" v-bind:channels="channels"></pe_driver_container>
+            <pe_driver_container v-bind:show-advanced="showAdvanced" v-bind:com_ports="com_ports" v-bind:pe-data="peDriver[7]" v-bind:number="8" v-bind:channels="channels"></pe_driver_container>
 
             <pe_tracked_timings_container v-bind:timing-data="timingData"></pe_tracked_timings_container>
 
@@ -90,7 +94,7 @@
                     <h2 class="pe_container_title">PocketEdition No: {{number}}</h2>
                     <div class="row" style="margin-bottom: 10px;">
                         <div class="col">
-                            <select v-model="peData.selectedComPort"> 
+                            <select v-model="peData.selectedComPort">
                                 <option v-for="com_port in com_ports" :value="com_port">
                                     {{com_port}}
                                 </option>
@@ -123,7 +127,7 @@
                                     <button v-on:click='refreshSafetyRSSI' class="btn btn-xs"><i class="fa fa-refresh" aria-hidden="true"></i></button>
                                 </td>
                                 <td>
-                                    <select v-model="peData.channel"> 
+                                    <select v-model="peData.channel">
                                         <option v-for="channel in channels" v-bind:value="channel.c">
                                             {{channel.title}}
                                         </option>
